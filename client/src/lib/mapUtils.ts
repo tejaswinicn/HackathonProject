@@ -12,16 +12,42 @@ export function generateStreetGrid(mapElement: HTMLDivElement): void {
   // Remove any existing content
   mapElement.innerHTML = '';
   mapElement.style.backgroundColor = '#cfd8dc';
-  
-  // Create user marker
-  const userMarker = document.createElement('div');
-  userMarker.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="36" height="36" class="text-primary"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 5.385 4.365 9.75 9.75 9.75s9.75-4.365 9.75-9.75c0-5.385-4.365-9.75-9.75-9.75zM9 10.5a3 3 0 106 0 3 3 0 00-6 0zm8.25-3a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" /></svg>';
-  userMarker.style.position = 'absolute';
-  userMarker.style.top = '50%';
-  userMarker.style.left = '50%';
-  userMarker.style.transform = 'translate(-50%, -50%)';
-  mapElement.appendChild(userMarker);
-  
+
+  // Function to place the user marker
+  function placeUserMarker(latitude: number, longitude: number) {
+    const userMarker = document.createElement('div');
+    userMarker.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="36" height="36" class="text-primary">
+        <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75 0 5.385 4.365 9.75 9.75 9.75s9.75-4.365 9.75-9.75c0-5.385-4.365-9.75-9.75-9.75zM9 10.5a3 3 0 106 0 3 3 0 00-6 0zm8.25-3a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+      </svg>
+    `;
+    userMarker.style.position = 'absolute';
+    userMarker.style.top = '50%';
+    userMarker.style.left = '50%';
+    userMarker.style.transform = 'translate(-50%, -50%)';
+    mapElement.appendChild(userMarker);
+
+    console.log(`User location set: ${latitude}, ${longitude}`);
+  }
+
+  // Get current location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        placeUserMarker(latitude, longitude);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        placeUserMarker(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude); // Fallback if location fails
+      }
+    );
+  } else {
+    console.error("Geolocation is not supported.");
+    placeUserMarker(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
+  }
+
   // Create horizontal streets
   for (let i = 0; i < 5; i++) {
     const street = document.createElement('div');
@@ -33,7 +59,7 @@ export function generateStreetGrid(mapElement: HTMLDivElement): void {
     street.style.left = '20%';
     mapElement.appendChild(street);
   }
-  
+
   // Create vertical streets
   for (let i = 0; i < 3; i++) {
     const street = document.createElement('div');
@@ -46,6 +72,7 @@ export function generateStreetGrid(mapElement: HTMLDivElement): void {
     mapElement.appendChild(street);
   }
 }
+
 
 // Simulate decreasing battery level
 export function simulateBatteryDrain(
