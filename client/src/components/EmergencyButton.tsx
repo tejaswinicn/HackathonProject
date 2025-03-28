@@ -136,6 +136,9 @@ export default function EmergencyButton({ className, deviceActive }: EmergencyBu
 
   const holdProgress = holdTimer ? Math.min(holdTimer / 3000, 1) : 0;
 
+  // Dynamically set the background color based on holdProgress
+  const backgroundColor = `linear-gradient(to top, rgba(255, 0, 0, ${1 - holdProgress}) 0%, rgba(255, 165, 0, ${holdProgress}) 100%)`;
+
   return (
     <>
       <div className={`text-center mb-8 ${className}`}>
@@ -144,7 +147,7 @@ export default function EmergencyButton({ className, deviceActive }: EmergencyBu
         </p>
         <button
           id="emergencyButton"
-          className={`emergency-button bg-primary text-white rounded-full w-40 h-40 flex items-center justify-center shadow-lg mx-auto focus:outline-none relative overflow-hidden ${
+          className={`emergency-button text-white rounded-full w-40 h-40 flex items-center justify-center shadow-lg mx-auto focus:outline-none relative overflow-hidden ${
             isHolding ? "pulse" : ""
           }`}
           onMouseDown={startHold}
@@ -152,11 +155,12 @@ export default function EmergencyButton({ className, deviceActive }: EmergencyBu
           onMouseLeave={endHold}
           onTouchStart={startHold}
           onTouchEnd={endHold}
+          style={{ background: backgroundColor }}
         >
           {holdTimer && (
             <div
-              className="absolute bottom-0 left-0 bg-primary-foreground opacity-50 h-full"
-              style={{ width: `${holdProgress * 100}%` }}
+              className="absolute bottom-0 left-0 opacity-50 h-full"
+              style={{ width: `${holdProgress * 100}%`, background: 'rgba(255, 165, 0, 0.6)' }}
             />
           )}
           <div className="text-center relative z-10">

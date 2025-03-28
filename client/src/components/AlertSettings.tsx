@@ -48,17 +48,14 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
       ]);
 
       // Optimistically update query cache
-      queryClient.setQueryData<DeviceSettings>(
-        ["/api/device-settings"],
-        (old = {
-          soundAlarm: false,
-          smsAlerts: false,
-          emergencyServices: false
-        }) => ({
-          ...old,
-          ...newSettings,
-        })
-      );
+      queryClient.setQueryData<DeviceSettings>(["/api/device-settings"], (old = {
+        soundAlarm: false,
+        smsAlerts: false,
+        emergencyServices: false,
+      }) => ({
+        ...old,
+        ...newSettings,
+      }));
 
       return { previousSettings };
     },
@@ -101,16 +98,18 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
 
   if (isLoading || !localSettings) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-5 mb-6 animate-pulse">
+      <div className="bg-dark rounded-lg shadow-md p-5 mb-6 animate-pulse">
         <div className="h-24 bg-gray-200 rounded-md" />
       </div>
     );
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
+    <div
+      className={`bg-gradient-to-r from-red-600 via-red-500 to-orange-400 text-white rounded-lg shadow-md p-5 mb-6 ${className}`}
+    >
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">
+        <h2 className="text-lg font-semibold">
           Badge Alert Settings
         </h2>
       </div>
@@ -119,8 +118,8 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
         {/* Sound Alarm */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-neutral-700">Sound Alarm</p>
-            <p className="text-sm text-neutral-500">Activate loud siren on badge</p>
+            <p className="font-medium">Sound Alarm</p>
+            <p className="text-sm">Activate loud siren on badge</p>
           </div>
           <Switch
             checked={localSettings.soundAlarm}
@@ -132,10 +131,8 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
         {/* SMS Alerts */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-neutral-700">SMS Alerts</p>
-            <p className="text-sm text-neutral-500">
-              Send emergency SMS notifications
-            </p>
+            <p className="font-medium">SMS Alerts</p>
+            <p className="text-sm">Send emergency SMS notifications</p>
           </div>
           <Switch
             checked={localSettings.smsAlerts}
@@ -147,10 +144,8 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
         {/* Emergency Services */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-neutral-700">Emergency Services</p>
-            <p className="text-sm text-neutral-500">
-              Notify emergency contacts automatically
-            </p>
+            <p className="font-medium">Emergency Services</p>
+            <p className="text-sm">Notify emergency contacts automatically</p>
           </div>
           <Switch
             checked={localSettings.emergencyServices}

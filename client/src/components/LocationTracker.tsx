@@ -44,13 +44,19 @@ export default function LocationTracker() {
   }, []);
 
   if (!location) {
-    return <p>Fetching location...</p>;
+    return <p className="text-white">Fetching location...</p>;
   }
 
+  // Calculate progress based on some factor (e.g., time or location data)
+  const progress = 0.7; // Example static progress value; you can update this dynamically
+
+  // Gradient color from red to orange
+  const gradientColor = `linear-gradient(to right, #ff0000 ${progress * 100}%, #ffa500 ${progress * 100}%)`;
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 mb-6">
-      <h2 className="text-lg font-semibold text-neutral-800">Current Location</h2>
-      <p className="text-sm text-neutral-600">{location.address}</p>
+    <div className="bg-white rounded-lg shadow-md p-5 mb-6" style={{ background: gradientColor }}>
+      <h2 className="text-lg font-semibold text-white">Current Location</h2>
+      <p className="text-sm text-white">{location.address}</p>
 
       {/* Map Display */}
       <MapContainer center={[location.latitude, location.longitude]} zoom={15} className="h-64 w-full mt-4 rounded-md">

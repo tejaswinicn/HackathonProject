@@ -44,7 +44,7 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
       const cleanup = simulateBatteryDrain(deviceSettings.data.batteryLevel, (newLevel) => {
         updateBattery.mutate(newLevel);
       });
-      
+
       return cleanup;
     }
   }, [deviceSettings?.data?.isActive, deviceSettings?.data?.batteryLevel]);
@@ -60,7 +60,7 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
 
   if (isLoading) {
     return (
-      <div className="badge-device bg-white rounded-lg shadow-md p-5 mb-6 animate-pulse">
+      <div className="badge-device bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 rounded-lg shadow-md p-5 mb-6 animate-pulse">
         <div className="h-24 bg-gray-200 rounded-md"></div>
       </div>
     );
@@ -68,20 +68,19 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
 
   const batteryLevel = deviceSettings?.data?.batteryLevel || 0; // Default to 0 if undefined
 
-  const batteryColor = batteryLevel < 20 
-    ? "bg-danger" 
-    : batteryLevel < 50 
-      ? "bg-warning" 
+  const batteryColor = batteryLevel < 20
+    ? "bg-danger"
+    : batteryLevel < 50
+      ? "bg-warning"
       : "bg-success";
 
   return (
-    <div className={`badge-device bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
+    <div className={`badge-device bg-gradient-to-r from-red-500 via-red-600 to-orange-500 rounded-lg shadow-md p-5 mb-6 ${className}`}>
       <div className={`badge-status-light ${deviceSettings?.data?.isActive ? 'bg-success' : 'bg-neutral-400'}`}></div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">Battery Status</h2>
-        
+        <h2 className="text-lg font-semibold text-white">Battery Status</h2> {/* Applied text-white */}
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <input
@@ -92,7 +91,7 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
             onChange={handleBatteryLevelChange}
             className="w-full"
           />
-          <p className="text-sm font-medium text-neutral-700">{deviceSettings?.batteryLevel || 0}%</p>
+          <p className="text-sm font-medium text-white">{deviceSettings?.batteryLevel || 0}%</p> {/* Applied text-white */}
         </div>
       </div>
     </div>
