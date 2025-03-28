@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -54,6 +53,11 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
     updateSettings.mutate({ isActive: checked });
   };
 
+  const handleBatteryLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newBatteryLevel = parseInt(event.target.value, 10);
+    updateBattery.mutate(newBatteryLevel);
+  };
+
   if (isLoading) {
     return (
       <div className="badge-device bg-white rounded-lg shadow-md p-5 mb-6 animate-pulse">
@@ -88,10 +92,18 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-neutral-600 mb-1 text-sm">Battery Level</p>
-          <div className="w-full bg-neutral-200 rounded-full h-2.5 mb-4">
-            <div className={`${batteryColor} h-2.5 rounded-full`} style={{ width: `${batteryLevel}%` }}></div>
-          </div>
-          <p className="text-sm font-medium text-neutral-700">{batteryLevel}%</p>
+          
+
+          
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={deviceSettings?.batteryLevel || 0}
+            onChange={handleBatteryLevelChange}
+            className="w-full"
+          />
+          <p className="text-sm font-medium text-neutral-700">{deviceSettings?.batteryLevel || 0}%</p>
         </div>
         
         <div>
