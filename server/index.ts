@@ -23,7 +23,7 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`; // Corrected line
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -60,7 +60,7 @@ app.use((req, res, next) => {
     }
 
     // Define the server port
-    const PORT = Number(process.env.PORT) || 5000; // Ensure it's a number
+    const PORT = Number(process.env.PORT) || 5001; // Ensure it's a number
 
     app.listen(PORT, "127.0.0.1", () => {
       console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
@@ -70,5 +70,4 @@ app.use((req, res, next) => {
     console.error("Failed to start server:", error);
     process.exit(1);
   }
-})(); // <-- Missing `})()` in your code
-
+})();
