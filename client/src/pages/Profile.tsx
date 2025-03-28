@@ -51,22 +51,23 @@ export default function Profile() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
-                    <Input id="fullName" defaultValue={user?.fullName} />
+                    <Input id="fullName" placeholder="Enter your name"/>
+
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue={user?.email} />
+                    <Input id="email" placeholder="Enter your email"/>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" defaultValue={user?.phone} />
+                    <Input id="phone" placeholder="Enter your phone number"/>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="username">Username</Label>
-                    <Input id="username" defaultValue={user?.username} />
+                    <Input id="username" placeholder="Enter your username"/>
                   </div>
                   
                   <div className="flex justify-between pt-4">

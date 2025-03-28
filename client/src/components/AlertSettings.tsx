@@ -61,14 +61,6 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-neutral-800">Badge Alert Settings</h2>
       </div>
-
-      <div className="bg-neutral-100 p-3 rounded-lg mb-4">
-        <h3 className="text-sm font-semibold mb-2">Badge Alert Capabilities</h3>
-        <p className="text-xs text-neutral-600 mb-2">• 95dB siren with flashing LED light pattern</p>
-        <p className="text-xs text-neutral-600 mb-2">• Audio recording with local storage</p>
-        <p className="text-xs text-neutral-600 mb-2">• Location-stamped incident logging</p>
-        <p className="text-xs text-neutral-600">• Settings configurable via badge USB connection</p>
-      </div>
       
       <div className="space-y-4">
         <div className="flex items-center justify-between">

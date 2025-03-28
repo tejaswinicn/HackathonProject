@@ -99,13 +99,7 @@ export default function LocationTracker({ className }: LocationTrackerProps) {
         </div>
       </div>
 
-      <div className="bg-neutral-100 p-3 rounded-lg mb-4">
-        <h3 className="text-sm font-semibold mb-2">Badge GPS Functionality</h3>
-        <p className="text-xs text-neutral-600 mb-2">• Built-in GPS module with local storage of location history</p>
-        <p className="text-xs text-neutral-600 mb-2">• Offline location tracking with data stored on badge</p>
-        <p className="text-xs text-neutral-600 mb-2">• Location data synchronized during docking/charging</p>
-        <p className="text-xs text-neutral-600">• Geofencing capability for defined safe zones</p>
-      </div>
+      
       
       <div 
         id="map" 
@@ -150,7 +144,8 @@ export default function LocationTracker({ className }: LocationTrackerProps) {
             <circle cx="12" cy="10" r="3"/>
           </svg>
           <p className="text-sm font-medium text-neutral-700" id="currentLocation">
-            {deviceSettings?.lastLocation?.address || 'Unknown location'}
+            <p>Banglore</p>
+
           </p>
         </div>
       </div>
