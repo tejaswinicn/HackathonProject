@@ -1,57 +1,108 @@
 import { Switch } from "@/components/ui/switch";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { queryClient } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+
+interface DeviceSettings {
+  soundAlarm: boolean;
+  smsAlerts: boolean;
+  emergencyServices: boolean;
+}
 
 interface AlertSettingsProps {
   className?: string;
 }
 
 export default function AlertSettings({ className }: AlertSettingsProps) {
-  const { data: deviceSettings, isLoading } = useQuery({
-    queryKey: ['/api/device-settings'],
-  });
-
   const { toast } = useToast();
+  const [localSettings, setLocalSettings] = useState<DeviceSettings | null>(null);
 
-  const updateSettings = useMutation({
-    mutationFn: async (settings: any) => {
-      const response = await apiRequest('PUT', '/api/device-settings', settings);
+  const { data: deviceSettings, isLoading } = useQuery<DeviceSettings>({
+    queryKey: ["/api/device-settings"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/device-settings");
       return response.json();
     },
+  });
+
+  // Sync fetched settings to local state
+  useEffect(() => {
+    if (deviceSettings) {
+      setLocalSettings(deviceSettings);
+    }
+  }, [deviceSettings]);
+
+  const updateSettings = useMutation({
+    mutationFn: async (settings: Partial<DeviceSettings>) => {
+      const response = await apiRequest("PUT", "/api/device-settings", settings);
+      if (response.status === 204) return settings;
+      return response.json();
+    },
+
+    onMutate: async (newSettings) => {
+      await queryClient.cancelQueries({ queryKey: ["/api/device-settings"] });
+
+      const previousSettings = queryClient.getQueryData<DeviceSettings>([
+        "/api/device-settings",
+      ]);
+
+      // Optimistically update query cache
+      queryClient.setQueryData<DeviceSettings>(
+        ["/api/device-settings"],
+        (old = {
+          soundAlarm: false,
+          smsAlerts: false,
+          emergencyServices: false
+        }) => ({
+          ...old,
+          ...newSettings,
+        })
+      );
+
+      return { previousSettings };
+    },
+
+    onError: (_err, _newSettings, context) => {
+      if (context?.previousSettings) {
+        queryClient.setQueryData(
+          ["/api/device-settings"],
+          context.previousSettings
+        );
+        setLocalSettings(context.previousSettings); // rollback local UI
+      }
+
+      toast({
+        title: "Error",
+        description: "Failed to update settings.",
+        variant: "destructive",
+      });
+    },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/device-settings'] });
       toast({
         title: "Settings updated",
         description: "Your badge alert settings have been updated.",
       });
     },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update settings",
-        variant: "destructive"
-      });
-    }
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/device-settings"] });
+    },
   });
 
-  const handleSmsAlertsToggle = (checked: boolean) => {
-    updateSettings.mutate({ smsAlerts: checked });
+  const handleToggle = (field: keyof DeviceSettings, value: boolean) => {
+    if (!localSettings) return;
+
+    const updatedSettings = { ...localSettings, [field]: value };
+    setLocalSettings(updatedSettings);
+    updateSettings.mutate({ [field]: value });
   };
 
-  const handleEmergencyServicesToggle = (checked: boolean) => {
-    updateSettings.mutate({ emergencyServices: checked });
-  };
-
-  const handleSoundAlarmToggle = (checked: boolean) => {
-    updateSettings.mutate({ soundAlarm: checked });
-  };
-
-  if (isLoading) {
+  if (isLoading || !localSettings) {
     return (
       <div className="bg-white rounded-lg shadow-md p-5 mb-6 animate-pulse">
-        <div className="h-24 bg-gray-200 rounded-md"></div>
+        <div className="h-24 bg-gray-200 rounded-md" />
       </div>
     );
   }
@@ -59,43 +110,54 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
   return (
     <div className={`bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">Badge Alert Settings</h2>
+        <h2 className="text-lg font-semibold text-neutral-800">
+          Badge Alert Settings
+        </h2>
       </div>
-      
+
       <div className="space-y-4">
+        {/* Sound Alarm */}
         <div className="flex items-center justify-between">
           <div>
             <p className="font-medium text-neutral-700">Sound Alarm</p>
             <p className="text-sm text-neutral-500">Activate loud siren on badge</p>
           </div>
-          <Switch 
-            checked={deviceSettings?.soundAlarm || false} 
-            onCheckedChange={handleSoundAlarmToggle}
+          <Switch
+            checked={localSettings.soundAlarm}
+            onCheckedChange={(checked) => handleToggle("soundAlarm", checked)}
             id="soundAlarmToggle"
           />
         </div>
-        
+
+        {/* SMS Alerts */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-neutral-700">Audio Recording</p>
-            <p className="text-sm text-neutral-500">Record audio during emergency</p>
+            <p className="font-medium text-neutral-700">SMS Alerts</p>
+            <p className="text-sm text-neutral-500">
+              Send emergency SMS notifications
+            </p>
           </div>
-          <Switch 
-            checked={deviceSettings?.smsAlerts || false} 
-            onCheckedChange={handleSmsAlertsToggle}
-            id="audioRecordingToggle"
+          <Switch
+            checked={localSettings.smsAlerts}
+            onCheckedChange={(checked) => handleToggle("smsAlerts", checked)}
+            id="smsAlertsToggle"
           />
         </div>
-        
+
+        {/* Emergency Services */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-neutral-700">Vibration Feedback</p>
-            <p className="text-sm text-neutral-500">Silent vibration during alert</p>
+            <p className="font-medium text-neutral-700">Emergency Services</p>
+            <p className="text-sm text-neutral-500">
+              Notify emergency contacts automatically
+            </p>
           </div>
-          <Switch 
-            checked={deviceSettings?.emergencyServices || false} 
-            onCheckedChange={handleEmergencyServicesToggle}
-            id="vibrationToggle"
+          <Switch
+            checked={localSettings.emergencyServices}
+            onCheckedChange={(checked) =>
+              handleToggle("emergencyServices", checked)
+            }
+            id="emergencyServicesToggle"
           />
         </div>
       </div>
