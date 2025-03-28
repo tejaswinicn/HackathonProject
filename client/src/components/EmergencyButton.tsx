@@ -113,15 +113,6 @@ export default function EmergencyButton({ className, deviceActive }: EmergencyBu
   return (
     <>
       <div className={`text-center mb-8 ${className}`}>
-        <div className="badge-design-info bg-neutral-100 p-3 rounded-lg mb-4">
-          <h3 className="text-sm font-semibold mb-2">Safety Badge Physical Design</h3>
-          <p className="text-xs text-neutral-600 mb-2">• Discreet, attachable to uniform, ID card or kurta pin</p>
-          <p className="text-xs text-neutral-600 mb-2">• Has recessed emergency button to prevent accidental activation</p>
-          <p className="text-xs text-neutral-600 mb-2">• Contains microphone, GPS module, and vibration motor</p>
-          <p className="text-xs text-neutral-600 mb-2">• Rechargeable battery with 7-day standby time</p>
-          <p className="text-xs text-neutral-600">• Offline operation with local storage</p>
-        </div>
-        
         <p className="text-neutral-600 mb-2">Press and hold for 3 seconds to activate emergency alert</p>
         <button
           id="emergencyButton"

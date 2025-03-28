@@ -81,20 +81,6 @@ export class MemStorage implements IStorage {
         }
       });
       
-      // Create default emergency contacts
-      this.createContact({
-        userId: user.id,
-        name: "Jane Doe",
-        phone: "+1 234 567 8901",
-        email: "jane.doe@example.com"
-      });
-      
-      this.createContact({
-        userId: user.id,
-        name: "John Smith",
-        phone: "+1 987 654 3210",
-        email: "john.smith@example.com"
-      });
     });
   }
 
