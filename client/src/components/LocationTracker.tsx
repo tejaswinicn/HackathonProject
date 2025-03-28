@@ -47,30 +47,24 @@ export default function LocationTracker() {
     return <p className="text-white">Fetching location...</p>;
   }
 
-  return (
-    <div className="relative bg-white rounded-lg shadow-md p-5 mb-6">
-      <h2 className="text-lg font-semibold text-gray-800">Current Location</h2>
-      <p className="text-sm text-gray-600">{location.address}</p>
+  // Calculate progress based on some factor (e.g., time or location data)
+  const progress = 0.7; // Example static progress value; you can update this dynamically
 
-      {/* Map Wrapper to Avoid Overlapping */}
-      <div className="relative w-full h-64 overflow-hidden rounded-md border border-gray-300 mt-4">
-        <MapContainer
-          center={[location.latitude, location.longitude]}
-          zoom={15}
-          className="h-full w-full relative z-0"
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Marker
-            position={[location.latitude, location.longitude]}
-            icon={L.icon({
-              iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-              iconSize: [25, 41],
-            })}
-          >
-            <Popup>{location.address}</Popup>
-          </Marker>
-        </MapContainer>
-      </div>
+  // Gradient color from red to orange
+  const gradientColor = `linear-gradient(to right, #ff0000 ${progress * 100}%, #ffa500 ${progress * 100}%)`;
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-5 mb-6" style={{ background: gradientColor }}>
+      <h2 className="text-lg font-semibold text-white">Current Location</h2>
+      <p className="text-sm text-white">{location.address}</p>
+
+      {/* Map Display */}
+      <MapContainer center={[location.latitude, location.longitude]} zoom={15} className="h-64 w-full mt-4 rounded-md">
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <Marker position={[location.latitude, location.longitude]} icon={L.icon({ iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png", iconSize: [25, 41] })}>
+          <Popup>{location.address}</Popup>
+        </Marker>
+      </MapContainer>
     </div>
   );
 }
