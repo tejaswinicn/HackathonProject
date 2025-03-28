@@ -142,34 +142,39 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     }
   };
 
+  // Background gradient from red to orange
+  const backgroundStyle = {
+    background: 'linear-gradient(to right, #ff0000, #ffa500)',  // Red to Orange gradient
+  };
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-md md:max-w-lg lg:max-w-xl p-0 max-h-[80vh] overflow-y-auto bg-white shadow-lg rounded-lg z-50">
+      <DialogContent className="max-w-md md:max-w-lg lg:max-w-xl p-0 max-h-[80vh] overflow-y-auto shadow-lg rounded-lg z-50" style={backgroundStyle}>
         <div className="bg-primary px-6 py-4 rounded-t-lg flex justify-between items-center">
           <DialogTitle className="text-xl font-bold text-white">Safety Badge Alert Active</DialogTitle>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 text-white">
           <DialogDescription className="text-center mb-4">
-            <p className="text-neutral-800 font-medium">Badge alarm active - 95dB siren is sounding</p>
-            <p className="text-neutral-600 text-sm">Location has been stored on badge</p>
+            <p className="font-medium">Badge alarm active - 95dB siren is sounding</p>
+            <p className="text-sm">Location has been stored on badge</p>
           </DialogDescription>
 
           <div className="bg-neutral-100 rounded-lg p-4 mb-4">
             <div className="mb-2">
-              <p className="text-sm text-neutral-500">Current Location</p>
-              <p className="font-medium text-neutral-800">{currentLocation}</p>
+              <p className="text-sm">Current Location</p>
+              <p className="font-medium">{currentLocation}</p>
             </div>
             <div>
-              <p className="text-sm text-neutral-500">Alert Time</p>
-              <p className="font-medium text-neutral-800">{alertTime}</p>
+              <p className="text-sm">Alert Time</p>
+              <p className="font-medium">{alertTime}</p>
             </div>
             <div className="mt-2 pt-2 border-t border-neutral-200">
-              <p className="text-sm text-neutral-500">Badge Status</p>
-              <p className="text-sm text-neutral-800">
+              <p className="text-sm">Badge Status</p>
+              <p className="text-sm">
                 <span className="inline-block w-2 h-2 bg-primary rounded-full mr-1"></span> Audio recording active
               </p>
-              <p className="text-sm text-neutral-800">
+              <p className="text-sm">
                 <span className="inline-block w-2 h-2 bg-primary rounded-full mr-1"></span> LED lights flashing
               </p>
             </div>
