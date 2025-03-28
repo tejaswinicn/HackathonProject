@@ -60,7 +60,7 @@ app.use((req, res, next) => {
     }
 
     // Define the server port
-    const PORT = Number(process.env.PORT) || 5001; // Ensure it's a number
+    const PORT = Number(process.env.PORT) || 5002; // Ensure it's a number
 
     app.listen(PORT, "127.0.0.1", () => {
       console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
