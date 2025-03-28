@@ -1,165 +1,64 @@
-import { useEffect, useRef, useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { queryClient } from "@/lib/queryClient";
-import { DEFAULT_LOCATION, generateStreetGrid } from "@/lib/mapUtils";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-interface LocationTrackerProps {
-  className?: string;
+interface Location {
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
-export default function LocationTracker({ className }: LocationTrackerProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const { data: deviceSettings, isLoading } = useQuery({
-    queryKey: ['/api/device-settings'],
-  });
+export default function LocationTracker() {
+  const [location, setLocation] = useState<Location | null>(null);
 
-  const updateLocationSharing = useMutation({
-    mutationFn: async (locationSharing: boolean) => {
-      const response = await apiRequest('PUT', '/api/device-settings', { locationSharing });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/device-settings'] });
+  // Fetch location and reverse geocode
+  const fetchLocation = async () => {
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
     }
-  });
 
-  const updateLocation = useMutation({
-    mutationFn: async (location: { latitude: number, longitude: number, address: string }) => {
-      const response = await apiRequest('PUT', '/api/device-settings/location', location);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/device-settings'] });
-    }
-  });
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
 
-  useEffect(() => {
-    if (mapRef.current) {
-      // Initial map simulation
-      generateStreetGrid(mapRef.current);
+        // Fetch address using OpenStreetMap (Nominatim API)
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        );
+        const data = await response.json();
+        const address = data.display_name || "Unknown Location";
 
-      // Simulate location updates
-      const interval = setInterval(() => {
-        if (deviceSettings?.isActive && deviceSettings?.locationSharing) {
-          const randomOffset = () => (Math.random() - 0.5) * 0.01;
-          const currentLocation = deviceSettings.lastLocation || DEFAULT_LOCATION;
-          
-          const newLocation = {
-            latitude: currentLocation.latitude + randomOffset(),
-            longitude: currentLocation.longitude + randomOffset(),
-            address: "350 5th Ave, New York, NY 10118" // Empire State Building address
-          };
-          
-          updateLocation.mutate(newLocation);
-        }
-      }, 30000); // Update every 30 seconds
-      
-      return () => clearInterval(interval);
-    }
-  }, [deviceSettings?.isActive, deviceSettings?.locationSharing]);
-
-  const handleLocationSharingToggle = (checked: boolean) => {
-    updateLocationSharing.mutate(checked);
+        setLocation({ latitude, longitude, address });
+      },
+      (error) => console.error("Error getting location:", error),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
-  if (isLoading) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-5 mb-6 animate-pulse">
-        <div className="h-64 bg-gray-200 rounded-md"></div>
-      </div>
-    );
+  useEffect(() => {
+    fetchLocation();
+    const interval = setInterval(fetchLocation, 30000); // Update every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!location) {
+    return <p>Fetching location...</p>;
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">Badge Location</h2>
-        <div className="flex items-center">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={`w-5 h-5 mr-1 ${deviceSettings?.locationSharing ? 'text-secondary' : 'text-neutral-500'}`}
-          >
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          <span 
-            className={`text-sm font-medium ${deviceSettings?.locationSharing ? 'text-secondary' : 'text-neutral-500'}`}
-            id="trackingStatus"
-          >
-            {deviceSettings?.locationSharing ? 'Active' : 'Inactive'}
-          </span>
-        </div>
-      </div>
+    <div className="bg-white rounded-lg shadow-md p-5 mb-6">
+      <h2 className="text-lg font-semibold text-neutral-800">Current Location</h2>
+      <p className="text-sm text-neutral-600">{location.address}</p>
 
-      
-      
-      <div 
-        id="map" 
-        ref={mapRef}
-        className="mb-4 h-[240px] w-full bg-neutral-200 rounded-lg relative overflow-hidden"
-      >
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-200" id="mapPlaceholder">
-          <div className="text-center">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="w-12 h-12 mx-auto text-neutral-400"
-            >
-              <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
-              <line x1="9" x2="9" y1="3" y2="18"/>
-              <line x1="15" x2="15" y1="6" y2="21"/>
-            </svg>
-            <p className="text-neutral-500 mt-2">Map loading...</p>
-          </div>
-        </div>
-      </div>
-      
-      <div>
-        <p className="text-neutral-600 mb-1 text-sm">Current Location</p>
-        <div className="flex items-center">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="w-5 h-5 mr-2 text-neutral-500"
-          >
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          <p className="text-sm font-medium text-neutral-700" id="currentLocation">
-            <p>Banglore</p>
-
-          </p>
-        </div>
-      </div>
-      
-      <div className="mt-4">
-        <div className="flex items-center justify-between">
-          <p className="text-neutral-600 text-sm">Store Location History</p>
-          <Switch 
-            checked={deviceSettings?.locationSharing || false} 
-            onCheckedChange={handleLocationSharingToggle}
-            id="locationSharingToggle"
-          />
-        </div>
-      </div>
+      {/* Map Display */}
+      <MapContainer center={[location.latitude, location.longitude]} zoom={15} className="h-64 w-full mt-4 rounded-md">
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <Marker position={[location.latitude, location.longitude]} icon={L.icon({ iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png", iconSize: [25, 41] })}>
+          <Popup>{location.address}</Popup>
+        </Marker>
+      </MapContainer>
     </div>
   );
 }
