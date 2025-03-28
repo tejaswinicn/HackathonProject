@@ -78,23 +78,12 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
     <div className={`badge-device bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
       <div className={`badge-status-light ${deviceSettings?.data?.isActive ? 'bg-success' : 'bg-neutral-400'}`}></div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-neutral-800">Badge Status</h2>
-        <div className="flex items-center">
-          <span className={`material-icons mr-1 ${deviceSettings?.data?.isActive ? 'text-success' : 'text-neutral-500'}`}>
-            {deviceSettings?.data?.isActive ? 'power' : 'power_off'}
-          </span>
-          <span className={`text-sm font-medium ${deviceSettings?.data?.isActive ? 'text-success' : 'text-neutral-500'}`}>
-            {deviceSettings?.data?.isActive ? 'Active' : 'Inactive'}
-          </span>
-        </div>
+        <h2 className="text-lg font-semibold text-neutral-800">Battery Status</h2>
+        
       </div>
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p className="text-neutral-600 mb-1 text-sm">Battery Level</p>
-          
-
-          
           <input
             type="range"
             min="0"
@@ -104,18 +93,6 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
             className="w-full"
           />
           <p className="text-sm font-medium text-neutral-700">{deviceSettings?.batteryLevel || 0}%</p>
-        </div>
-        
-        <div>
-          <p className="text-neutral-600 mb-1 text-sm">Badge Mode</p>
-          <div className="flex items-center">
-            <span className="text-sm font-medium text-neutral-700 mr-2">Active</span>
-            <Switch 
-              checked={deviceSettings?.data?.isActive || false} 
-              onCheckedChange={handleDeviceToggle}
-              id="deviceToggle"
-            />
-          </div>
         </div>
       </div>
     </div>
