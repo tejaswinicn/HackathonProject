@@ -10,13 +10,8 @@ interface DeviceStatusProps {
   className?: string;
 }
 
-interface DeviceSettings {
-  isActive?: boolean;
-  batteryLevel?: number;
-}
-
 export default function DeviceStatus({ className }: DeviceStatusProps) {
-  const { data: deviceSettings, isLoading } = useQuery<{ data: DeviceSettings }>({
+  const { data: deviceSettings, isLoading } = useQuery({
     queryKey: ['/api/device-settings'],
   });
 
@@ -41,14 +36,14 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
   });
 
   useEffect(() => {
-    if (deviceSettings?.data?.isActive && deviceSettings?.data?.batteryLevel !== undefined && deviceSettings?.data?.batteryLevel > 0) {
-      const cleanup = simulateBatteryDrain(deviceSettings.data.batteryLevel, (newLevel) => {
+    if (deviceSettings?.isActive && deviceSettings?.batteryLevel > 0) {
+      const cleanup = simulateBatteryDrain(deviceSettings.batteryLevel, (newLevel) => {
         updateBattery.mutate(newLevel);
       });
       
       return cleanup;
     }
-  }, [deviceSettings?.data?.isActive, deviceSettings?.data?.batteryLevel]);
+  }, [deviceSettings?.isActive, deviceSettings?.batteryLevel]);
 
   const handleDeviceToggle = (checked: boolean) => {
     updateSettings.mutate({ isActive: checked });
@@ -62,25 +57,23 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
     );
   }
 
-  const batteryLevel = deviceSettings?.data?.batteryLevel || 0; // Default to 0 if undefined
-
-  const batteryColor = batteryLevel < 20 
+  const batteryColor = deviceSettings?.batteryLevel < 20 
     ? "bg-danger" 
-    : batteryLevel < 50 
+    : deviceSettings?.batteryLevel < 50 
       ? "bg-warning" 
       : "bg-success";
 
   return (
     <div className={`badge-device bg-white rounded-lg shadow-md p-5 mb-6 ${className}`}>
-      <div className={`badge-status-light ${deviceSettings?.data?.isActive ? 'bg-success' : 'bg-neutral-400'}`}></div>
+      <div className={`badge-status-light ${deviceSettings?.isActive ? 'bg-success' : 'bg-neutral-400'}`}></div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-neutral-800">Badge Status</h2>
         <div className="flex items-center">
-          <span className={`material-icons mr-1 ${deviceSettings?.data?.isActive ? 'text-success' : 'text-neutral-500'}`}>
-            {deviceSettings?.data?.isActive ? 'power' : 'power_off'}
+          <span className={`material-icons mr-1 ${deviceSettings?.isActive ? 'text-success' : 'text-neutral-500'}`}>
+            {deviceSettings?.isActive ? 'power' : 'power_off'}
           </span>
-          <span className={`text-sm font-medium ${deviceSettings?.data?.isActive ? 'text-success' : 'text-neutral-500'}`}>
-            {deviceSettings?.data?.isActive ? 'Active' : 'Inactive'}
+          <span className={`text-sm font-medium ${deviceSettings?.isActive ? 'text-success' : 'text-neutral-500'}`}>
+            {deviceSettings?.isActive ? 'Active' : 'Inactive'}
           </span>
         </div>
       </div>
@@ -89,9 +82,9 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
         <div>
           <p className="text-neutral-600 mb-1 text-sm">Battery Level</p>
           <div className="w-full bg-neutral-200 rounded-full h-2.5 mb-4">
-            <div className={`${batteryColor} h-2.5 rounded-full`} style={{ width: `${batteryLevel}%` }}></div>
+            <div className={`${batteryColor} h-2.5 rounded-full`} style={{ width: `${deviceSettings?.batteryLevel || 0}%` }}></div>
           </div>
-          <p className="text-sm font-medium text-neutral-700">{batteryLevel}%</p>
+          <p className="text-sm font-medium text-neutral-700">{deviceSettings?.batteryLevel || 0}%</p>
         </div>
         
         <div>
@@ -99,7 +92,7 @@ export default function DeviceStatus({ className }: DeviceStatusProps) {
           <div className="flex items-center">
             <span className="text-sm font-medium text-neutral-700 mr-2">Active</span>
             <Switch 
-              checked={deviceSettings?.data?.isActive || false} 
+              checked={deviceSettings?.isActive || false} 
               onCheckedChange={handleDeviceToggle}
               id="deviceToggle"
             />

@@ -12,7 +12,7 @@ const playBeep = () => {
   beepSound.play().catch((error) => console.error("Beep sound failed:", error));
 
   // Fallback: Web Audio API (if file doesn't exist)
-  const ctx = new (window.AudioContext || window.AudioContext)();
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
   const oscillator = ctx.createOscillator();
   oscillator.type = "sine"; // Sound type
   oscillator.frequency.setValueAtTime(1000, ctx.currentTime); // 1000 Hz beep
