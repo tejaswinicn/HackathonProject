@@ -13,56 +13,42 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
   const [isCalling, setIsCalling] = useState(false);
   const [currentLocation, setCurrentLocation] = useState("Fetching location...");
   const [isRecording, setIsRecording] = useState(false);
-  const [videoURL, setVideoURL] = useState<string | null>(null);  // To store the recorded video URL
-  const [audioURL, setAudioURL] = useState<string | null>(null);  // To store the recorded audio URL
-  const videoRef = useRef<HTMLVideoElement | null>(null);  // To handle video playback
-  const audioRef = useRef<HTMLAudioElement | null>(null);  // To handle audio playback
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);  // To handle media recording
+  const [recordingURL, setRecordingURL] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
 
   const { toast } = useToast();
 
-  // Start recording audio and video when the modal opens
+  // Start recording video & audio when modal opens
   useEffect(() => {
     const startRecording = async () => {
       try {
-        // Request permission to access both the microphone and camera
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         setMediaStream(stream);
 
-        // Setup MediaRecorder to record both audio and video
-        const mediaRecorder = new MediaRecorder(stream);
+        const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm; codecs=vp9,opus" });
         mediaRecorderRef.current = mediaRecorder;
 
-        const videoChunks: Blob[] = [];
-        const audioChunks: Blob[] = [];
+        const chunks: Blob[] = [];
 
         mediaRecorder.ondataavailable = (event) => {
-          if (event.data.type.includes("audio")) {
-            audioChunks.push(event.data);
-          } else if (event.data.type.includes("video")) {
-            videoChunks.push(event.data);
+          if (event.data.size > 0) {
+            chunks.push(event.data);
           }
         };
 
         mediaRecorder.onstop = () => {
-          // Create blobs for video and audio
-          const videoBlob = new Blob(videoChunks, { type: "video/webm" });
-          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-
-          // Create URLs for the video and audio
-          const videoURL = URL.createObjectURL(videoBlob);
-          const audioURL = URL.createObjectURL(audioBlob);
-
-          setVideoURL(videoURL);  // Set video URL
-          setAudioURL(audioURL);  // Set audio URL
+          const recordedBlob = new Blob(chunks, { type: "video/webm" });
+          const recordedURL = URL.createObjectURL(recordedBlob);
+          setRecordingURL(recordedURL);
+          setIsRecording(false);
         };
 
         mediaRecorder.start();
         setIsRecording(true);
-
       } catch (error) {
-        console.error("Error starting video and audio recording:", error);
+        console.error("Error starting recording:", error);
         setIsRecording(false);
       }
     };
@@ -70,15 +56,19 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     startRecording();
 
     return () => {
-      // Stop recording on cleanup
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => track.stop());  // Stop the media tracks
-      }
+      stopRecording(); // Ensure cleanup on unmount
     };
   }, []);
+
+  // Stop recording manually
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+    }
+  };
 
   // Fetch current location
   useEffect(() => {
@@ -91,8 +81,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
             );
             const data = await response.json();
-            const locationName = data.display_name || `Lat: ${latitude}, Lng: ${longitude}`;
-            setCurrentLocation(locationName);
+            setCurrentLocation(data.display_name || `Lat: ${latitude}, Lng: ${longitude}`);
           } catch (error) {
             console.error("Error fetching location:", error);
             setCurrentLocation("Unable to fetch location.");
@@ -118,7 +107,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     }, 2000);
   };
 
-  // Play or pause video
+  // Play video recording
   const handlePlayVideo = () => {
     if (videoRef.current) {
       videoRef.current.play();
@@ -131,14 +120,13 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     }
   };
 
-  // Play or pause audio
-  const handlePlayAudio = () => {
-    if (audioRef.current) {
-      if (audioRef.current.paused) {
-        audioRef.current.play();
-      } else {
-        audioRef.current.pause();
-      }
+  // Download video recording
+  const handleDownloadVideo = () => {
+    if (recordingURL) {
+      const a = document.createElement("a");
+      a.href = recordingURL;
+      a.download = "emergency_recording.webm"; // File name for saving
+      a.click();
     }
   };
 
@@ -182,49 +170,34 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
 
           <div className="flex flex-col space-y-3">
             {/* Video Playback */}
-            {videoURL && (
+            {recordingURL && (
               <div className="flex flex-col space-y-2">
-                <Button
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-5 h-auto mt-4"
-                  onClick={handlePlayVideo}
-                >
+                <Button className="w-full bg-green-500 hover:bg-green-600 text-white py-5 h-auto mt-4" onClick={handlePlayVideo}>
                   Play Recorded Video
                 </Button>
-                <Button
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-5 h-auto mt-4"
-                  onClick={handlePauseVideo}
-                >
+                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-5 h-auto mt-4" onClick={handlePauseVideo}>
                   Pause Video Recording
                 </Button>
-                <video ref={videoRef} src={videoURL} controls width="100%" />
-              </div>
-            )}
+                <video ref={videoRef} src={recordingURL} controls width="100%" />
 
-            {/* Audio Playback */}
-            {audioURL && (
-              <div className="flex flex-col space-y-2">
-                <Button
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-5 h-auto mt-4"
-                  onClick={handlePlayAudio}
-                >
-                  {audioRef.current?.paused ? "Play Recorded Audio" : "Pause Audio"}
+                {/* 📥 Download Video Button */}
+                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-5 h-auto mt-4" onClick={handleDownloadVideo}>
+                  Download Video Recording
                 </Button>
-                <audio ref={audioRef} src={audioURL} controls />
               </div>
             )}
 
-            <Button
-              className="w-full bg-secondary hover:bg-secondary/90 text-white py-5 h-auto"
-              onClick={handleCallEmergencyServices}
-              disabled={isCalling}
-            >
+            {/* ⏹️ Stop Recording Button */}
+            {isRecording && (
+              <Button className="w-full bg-red-500 hover:bg-red-600 text-white py-5 h-auto" onClick={stopRecording}>
+                Stop Recording
+              </Button>
+            )}
+
+            <Button className="w-full bg-secondary hover:bg-secondary/90 text-white py-5 h-auto" onClick={handleCallEmergencyServices} disabled={isCalling}>
               {isCalling ? "Activating..." : "Activate High-Intensity Alarm"}
             </Button>
-            <Button
-              variant="outline"
-              className="w-full bg-neutral-200 text-neutral-700 hover:bg-neutral-300 border-none py-5 h-auto"
-              onClick={onCancel}
-            >
+            <Button variant="outline" className="w-full bg-neutral-200 text-neutral-700 hover:bg-neutral-300 border-none py-5 h-auto" onClick={onCancel}>
               Cancel Badge Alert
             </Button>
           </div>
@@ -233,3 +206,4 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     </Dialog>
   );
 }
+
