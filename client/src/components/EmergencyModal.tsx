@@ -142,7 +142,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
           <DialogTitle className="text-xl font-bold text-white">Safety Badge Alert Active</DialogTitle>
         </div>
 
-        <div className="p-6 text-white">
+        <div className="p-6 text-dark">
           <DialogDescription className="text-center mb-4">
             <p className="font-medium">Badge alarm active - 95dB siren is sounding</p>
             <p className="text-sm">Location has been stored on badge</p>
@@ -194,9 +194,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
               </Button>
             )}
 
-            <Button className="w-full bg-secondary hover:bg-secondary/90 text-white py-5 h-auto" onClick={handleCallEmergencyServices} disabled={isCalling}>
-              {isCalling ? "Activating..." : "Activate High-Intensity Alarm"}
-            </Button>
+            
             <Button variant="outline" className="w-full bg-neutral-200 text-neutral-700 hover:bg-neutral-300 border-none py-5 h-auto" onClick={onCancel}>
               Cancel Badge Alert
             </Button>

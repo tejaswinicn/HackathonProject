@@ -34,43 +34,66 @@ function UserProfile() {
   };
 
   return (
-    <div>
-      <h2>User Profile</h2>
+    <div
+      style={{
+        background: "linear-gradient(to right, red, red, orange)",
+        color: "white",
+        padding: "20px",
+        borderRadius: "8px",
+        fontFamily: 'sans-serif'
+      }}
+    >
+      <h2 style={{ textAlign: "center" }}>User Profile</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "block", marginBottom: "5px" }}>Name:</label>
           <input
             type="text"
             name="name"
             value={profile.name}
             onChange={handleChange}
             required
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", backgroundColor:'white', color:'black' }}
           />
         </div>
-        <div>
-          <label>Email:</label>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "block", marginBottom: "5px" }}>Email:</label>
           <input
             type="email"
             name="email"
             value={profile.email}
             onChange={handleChange}
             required
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", backgroundColor:'white', color:'black' }}
           />
         </div>
-        <div>
-          <label>Phone:</label>
+        <div style={{ marginBottom: "10px" }}>
+          <label style={{ display: "block", marginBottom: "5px" }}>Phone:</label>
           <input
             type="tel"
             name="phone"
             value={profile.phone}
             onChange={handleChange}
             required
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", backgroundColor:'white', color:'black' }}
           />
         </div>
-        <button type="submit">Update Profile</button>
+        <button
+          type="submit"
+          style={{
+            backgroundColor: "darkred",
+            color: "white",
+            padding: "10px 15px",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Update Profile
+        </button>
       </form>
 
-      <h3>Current Profile Data:</h3>
+      <h3 style={{ marginTop: "20px" }}>Current Profile Data:</h3>
       <p>Name: {profile.name}</p>
       <p>Email: {profile.email}</p>
       <p>Phone: {profile.phone}</p>

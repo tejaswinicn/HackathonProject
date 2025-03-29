@@ -35,7 +35,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export function ContactModal({ isOpen, onClose, contactToEdit }: ContactModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
@@ -93,7 +93,7 @@ export function ContactModal({ isOpen, onClose, contactToEdit }: ContactModalPro
 
   const onSubmit = (data: ContactFormData) => {
     setIsSubmitting(true);
-    
+
     if (contactToEdit) {
       updateContact.mutate({ id: contactToEdit.id, contact: data });
     } else {
@@ -109,89 +109,64 @@ export function ContactModal({ isOpen, onClose, contactToEdit }: ContactModalPro
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md p-0">
-        <div className="bg-secondary px-6 py-4 rounded-t-lg">
+      <DialogContent className="max-w-md p-0 text-white" style={{ background: "linear-gradient(to right, #ff0000, #ff0000, #ffa500)" }}>
+        <div className="px-6 py-4 rounded-t-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-white flex justify-between items-center">
               <span>{contactToEdit ? "Edit Emergency Contact" : "Add Emergency Contact"}</span>
-              <Button variant="ghost" size="icon" onClick={handleClose} className="text-white">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className="w-5 h-5"
-                >
-                  <path d="M18 6 6 18"/>
-                  <path d="m6 6 12 12"/>
-                </svg>
-                <span className="sr-only">Close</span>
-              </Button>
             </DialogTitle>
           </DialogHeader>
         </div>
         <div className="p-6">
           <form id="contactForm" onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
-              <Label 
-                htmlFor="contactName"
-                className="block text-neutral-700 text-sm font-medium mb-2"
-              >
+              <Label htmlFor="contactName" className="block text-white text-sm font-medium mb-2">
                 Full Name
               </Label>
               <Input
                 id="contactName"
                 type="text"
                 placeholder="Enter contact name"
-                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black placeholder-gray-500"
                 {...register("name")}
               />
               {errors.name && (
                 <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
               )}
             </div>
-            
+
             <div className="mb-4">
-              <Label 
-                htmlFor="contactPhone"
-                className="block text-neutral-700 text-sm font-medium mb-2"
-              >
+              <Label htmlFor="contactPhone" className="block text-white text-sm font-medium mb-2">
                 Phone Number
               </Label>
               <Input
                 id="contactPhone"
                 type="tel"
                 placeholder="Enter phone number"
-                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black placeholder-gray-500"
                 {...register("phone")}
               />
               {errors.phone && (
                 <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
               )}
             </div>
-            
+
             <div className="mb-6">
-              <Label 
-                htmlFor="contactEmail"
-                className="block text-neutral-700 text-sm font-medium mb-2"
-              >
+              <Label htmlFor="contactEmail" className="block text-white text-sm font-medium mb-2">
                 Email
               </Label>
               <Input
                 id="contactEmail"
                 type="email"
                 placeholder="Enter email address"
-                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary text-black placeholder-gray-500"
                 {...register("email")}
               />
               {errors.email && (
                 <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
-            
+
             <div className="flex justify-end">
               <Button
                 type="button"
@@ -207,11 +182,11 @@ export function ContactModal({ isOpen, onClose, contactToEdit }: ContactModalPro
                 variant="default"
                 id="saveContactBtn"
                 disabled={isSubmitting}
-                className="bg-secondary hover:bg-secondary/90 text-white"
+                className="bg-secondary hover:bg-secondary/90 text-black"
               >
                 {isSubmitting ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
