@@ -8,7 +8,7 @@ import { getCurrentDateTime } from "@/lib/mapUtils";
 
 // 🔊 Function to play beep sound
 const playBeep = () => {
-  const beepSound = new Audio("/beep.mp3"); // Ensure "beep.mp3" is inside the "public" folder
+  const beepSound = new Audio("/siren.mp3"); // Ensure "beep.mp3" is inside the "public" folder
   beepSound.play().catch((error) => console.error("Beep sound failed:", error));
 
   // Fallback: Web Audio API (if file doesn't exist)
