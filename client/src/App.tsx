@@ -6,7 +6,7 @@ import NotFound from "@/pages/not-found";
 
 function App() {
   return (
-    <div className="min-h-screen bg-neutral-100 flex flex-col">
+    <div className="min-h-screen bg-black-100 flex flex-col">
       <Switch>
         <Route path="/" component={Dashboard} />
         <Route path="/profile" component={Profile} />

@@ -79,12 +79,12 @@ export default function Profile() {
   return (
     <>
       <AppHeader />
-      
+
       <main className="container mx-auto px-4 py-6">
-        <Card className="max-w-md mx-auto">
+        <Card className="max-w-md mx-auto" style={{ background: "linear-gradient(to right, red, red, orange)", color: "white", borderRadius: '8px', padding:'1rem' }}>
           <CardHeader>
-            <CardTitle>User Profile</CardTitle>
-            <CardDescription>
+            <CardTitle style={{color:'white'}}>User Profile</CardTitle>
+            <CardDescription style={{color:'lightgrey'}}>
               Manage your personal information and account details
             </CardDescription>
           </CardHeader>
@@ -107,54 +107,59 @@ export default function Profile() {
                 <form onSubmit={handleSaveProfile}>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="fullName">Full Name</Label>
-                      <Input 
-                        id="fullName" 
-                        placeholder="Enter your name" 
-                        value={formData.fullName} 
-                        onChange={handleInputChange} 
+                      <Label htmlFor="fullName" style={{color:'white'}}>Full Name</Label>
+                      <Input
+                        id="fullName"
+                        placeholder="Enter your name"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        style={{backgroundColor:'rgba(255,255,255,0.8)', color:'black'}}
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        placeholder="Enter your email" 
-                        value={formData.email} 
-                        onChange={handleInputChange} 
+                      <Label htmlFor="email" style={{color:'white'}}>Email</Label>
+                      <Input
+                        id="email"
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        style={{backgroundColor:'rgba(255,255,255,0.8)', color:'black'}}
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <Label htmlFor="phoneNumber">Phone Number</Label>
-                      <Input 
-                        id="phoneNumber" 
-                        placeholder="Enter your phone number" 
-                        value={formData.phoneNumber} 
-                        onChange={handleInputChange} 
+                      <Label htmlFor="phoneNumber" style={{color:'white'}}>Phone Number</Label>
+                      <Input
+                        id="phoneNumber"
+                        placeholder="Enter your phone number"
+                        value={formData.phoneNumber}
+                        onChange={handleInputChange}
+                        style={{backgroundColor:'rgba(255,255,255,0.8)', color:'black'}}
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input 
-                        id="username" 
-                        placeholder="Enter your username" 
-                        value={formData.username} 
-                        onChange={handleInputChange} 
+                      <Label htmlFor="username" style={{color:'white'}}>Username</Label>
+                      <Input
+                        id="username"
+                        placeholder="Enter your username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        style={{backgroundColor:'rgba(255,255,255,0.8)', color:'black'}}
                       />
                     </div>
-                    
+
                     <div className="flex justify-between pt-4">
-                      <Button 
-                        type="button" 
+                      <Button
+                        type="button"
                         variant="outline"
                         onClick={() => setLocation("/")}
+                        style={{color:'white', borderColor:'white'}}
                       >
                         Back
                       </Button>
-                      <Button type="submit">Save Changes</Button>
+                      <Button type="submit" style={{backgroundColor:'darkred', color:'white'}}>Save Changes</Button>
                     </div>
                   </div>
                 </form>
@@ -169,13 +174,12 @@ export default function Profile() {
                     Logout
                   </Button>
                 </div>
-
               </>
             )}
           </CardContent>
         </Card>
       </main>
-      
+
       <AppFooter />
     </>
   );

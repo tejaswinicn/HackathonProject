@@ -94,13 +94,10 @@ export default function EmergencyContacts() {
   // Calculate progress from contacts length (just as an example)
   const holdProgress = Math.min(contacts.length / 10, 1); // Change this logic if you need a different trigger
 
-  // Static gradient color from red to orange
-  const gradientColor = `linear-gradient(to right, #ff0000, #ffa500)`;
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 mb-6" style={{ background: gradientColor }}>
+    <div className="rounded-lg shadow-md p-5 mb-6 text-white" style={{ background: "linear-gradient(to right, #ff0000, #ff0000, #ffa500)" }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-white">Emergency Contacts</h2>
+        <h2 className="font-semibold text-white">Emergency Contacts</h2>
         <Button size="icon" variant="secondary" onClick={() => setIsModalOpen(true)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
             <path d="M5 12h14" />
@@ -112,19 +109,19 @@ export default function EmergencyContacts() {
 
       {/* ✅ Show loading or error state */}
       {isLoading ? (
-        <p className="text-center text-white">Loading contacts...</p> // Changed to text-white
+        <p className="text-center text-white">Loading contacts...</p>
       ) : error ? (
-        <p className="text-center text-white">Failed to load contacts.</p> // Changed to text-white
+        <p className="text-center text-white">Failed to load contacts.</p>
       ) : (
         <div id="contactsList" className={contacts.length === 0 ? "text-center py-4" : ""}>
           {contacts.length === 0 ? (
-            <p className="text-white">No emergency contacts added yet</p> // Changed to text-white
+            <p className="text-white">No emergency contacts added yet</p>
           ) : (
             contacts.map((contact) => (
               <div key={contact.id} className="border-b border-neutral-200 py-3 flex justify-between items-center">
                 <div>
-                  <p className="font-medium text-white">{contact.name}</p> // Changed to text-white
-                  <p className="text-sm text-white">{contact.phone}</p> // Changed to text-white
+                  <p className="font-medium text-white">{contact.name}</p>
+                  <p className="text-sm text-white">{contact.phone}</p>
                 </div>
                 {/* ✅ Delete Button */}
                 <Button
