@@ -90,7 +90,7 @@ export default function EmergencyButton({ className, deviceActive }: EmergencyBu
       toast({
         title: "Badge Inactive",
         description:
-          "The safety badge is currently inactive. Please activate it to use the emergency feature.",
+          "The safety is currently inactive. Please activate it to use the emergency feature.",
         variant: "destructive",
       });
       return;

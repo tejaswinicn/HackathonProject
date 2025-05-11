@@ -102,7 +102,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
       setIsCalling(false);
       toast({
         title: "Badge Simulation",
-        description: "In a real badge, this would trigger the badge's audio recording and high-intensity alarm.",
+        description: "In a real, this would trigger the audio recording and high-intensity alarm.",
       });
     }, 2000);
   };
@@ -139,13 +139,13 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-md md:max-w-lg lg:max-w-xl p-0 max-h-[80vh] overflow-y-auto shadow-lg rounded-lg z-50" style={backgroundStyle}>
         <div className="bg-primary px-6 py-4 rounded-t-lg flex justify-between items-center">
-          <DialogTitle className="text-xl font-bold text-white">Safety Badge Alert Active</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-white">SHEild Active</DialogTitle>
         </div>
 
         <div className="p-6 text-dark">
           <DialogDescription className="text-center mb-4">
-            <p className="font-medium">Badge alarm active - 95dB siren is sounding</p>
-            <p className="text-sm">Location has been stored on badge</p>
+            <p className="font-medium">Alarm active - 95dB siren is sounding</p>
+            <p className="text-sm">Location has been stored </p>
           </DialogDescription>
 
           <div className="bg-neutral-100 rounded-lg p-4 mb-4">
@@ -158,7 +158,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
               <p className="font-medium">{alertTime}</p>
             </div>
             <div className="mt-2 pt-2 border-t border-neutral-200">
-              <p className="text-sm">Badge Status</p>
+              <p className="text-sm">Status</p>
               <p className="text-sm">
                 <span className="inline-block w-2 h-2 bg-primary rounded-full mr-1"></span> Audio recording active
               </p>
@@ -196,7 +196,7 @@ export function EmergencyModal({ onClose, onCancel, alertTime }: EmergencyModalP
 
             
             <Button variant="outline" className="w-full bg-neutral-200 text-neutral-700 hover:bg-neutral-300 border-none py-5 h-auto" onClick={onCancel}>
-              Cancel Badge Alert
+              Cancel Alert
             </Button>
           </div>
         </div>
