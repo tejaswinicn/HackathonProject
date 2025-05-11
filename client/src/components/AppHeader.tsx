@@ -26,7 +26,7 @@ export default function AppHeader({ className }: AppHeaderProps) {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
               </svg>
             </div>
-            <h1 className="text-2xl font-semibold text-white">Smart Safety Badge</h1>
+            <h1 className="text-2xl font-semibold text-white">SHEild</h1>
           </div>
         </Link>
 

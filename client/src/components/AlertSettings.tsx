@@ -79,7 +79,7 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
     onSuccess: () => {
       toast({
         title: "Settings updated",
-        description: "Your badge alert settings have been updated.",
+        description: "Your alert settings have been updated.",
       });
     },
 
@@ -110,7 +110,7 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
     >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">
-          Badge Alert Settings
+          Alert Settings
         </h2>
       </div>
 
@@ -119,7 +119,7 @@ export default function AlertSettings({ className }: AlertSettingsProps) {
         <div className="flex items-center justify-between">
           <div>
             <p className="font-medium">Sound Alarm</p>
-            <p className="text-sm">Activate loud siren on badge</p>
+            <p className="text-sm">Activate loud siren </p>
           </div>
           <Switch
             checked={localSettings.soundAlarm}
